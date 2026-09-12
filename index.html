@@ -33,27 +33,29 @@
 
   <!-- MLBB / Google Login Screen -->
   <div id="login-screen" class="min-h-screen flex flex-col justify-center items-center px-6 text-center">
-    <!-- Admin Triple Click Trigger Header -->
-    <div onclick="adminClickCheck()" class="cursor-pointer select-none">
-      <div class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center border border-cyan-500/30 mb-3 mx-auto">
+    
+    <!-- Admin Trigger Header -->
+    <div class="p-2 border border-cyan-500/20 rounded-2xl bg-cyan-950/10 mb-4">
+      <!-- ဒီ Logo (ဂိမ်းလက်ကိုင်ပုံ) ကိုပဲ ၃ ချက်နှိပ်ရပါမည် -->
+      <div onclick="adminClickCheck()" class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center border border-cyan-500/30 mb-2 mx-auto cursor-pointer active:scale-90 transition select-none">
         <i class="fa-solid fa-gamepad text-3xl text-cyan-400"></i>
       </div>
-      <h1 class="text-2xl font-black italic text-cyan-400 mb-1">ATK TOURNAMENT</h1>
+      <h1 class="text-2xl font-black italic text-cyan-400">ATK TOURNAMENT</h1>
+      <p class="text-[10px] text-cyan-500/60 mt-1">(Admin ဝင်ရန် အပေါ်မှ Logo ကို ၃ ချက်နှိပ်ပါ)</p>
     </div>
-    <p class="text-xs text-gray-400 mb-6">Mobile Legends Gaming Platform</p>
     
     <div class="w-full glass-card p-5 rounded-2xl space-y-4 text-left border border-gray-800">
       <h2 class="text-sm font-bold text-white text-center mb-2"><i class="fa-solid fa-user-shield text-cyan-400"></i> Login ဝင်ရောက်ရန်</h2>
       
-      <!-- Google Sign-In Button -->
-      <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-gray-100 text-gray-800 font-bold py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-2 border border-gray-300">
+      <!-- Working Google Sign-In Button -->
+      <button type="button" onclick="loginWithGoogle()" class="w-full bg-white hover:bg-gray-100 text-gray-800 font-bold py-3 rounded-xl shadow text-xs flex items-center justify-center gap-2 border border-gray-300 active:scale-95 transition cursor-pointer">
         <svg class="w-4 h-4" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
           <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
           <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
           <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
         </svg>
-        Continue with Google
+        <span>Continue with Google</span>
       </button>
 
       <div class="flex items-center my-3">
@@ -73,7 +75,7 @@
         </div>
       </div>
 
-      <button onclick="loginWithMLBB()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 rounded-xl shadow text-xs mt-2 transition">
+      <button type="button" onclick="loginWithMLBB()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 rounded-xl shadow text-xs mt-2 transition">
         ဂိမ်းအကောင့်ဖြင့် Login ဝင်မည်
       </button>
     </div>
@@ -198,45 +200,6 @@
     </div>
   </div>
 
-  <!-- Spin Wheel Modal -->
-  <div id="spin-modal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-gray-900 border border-gray-800 p-5 rounded-2xl w-full max-w-sm text-center relative space-y-4">
-      <button onclick="closeModal('spin-modal')" class="absolute top-3 right-3 text-gray-400 text-lg">&times;</button>
-      <div>
-        <h3 class="font-black text-lg text-cyan-400"><i class="fa-solid fa-dharmachakra"></i> 5-Player Spin Wheel</h3>
-        <p class="text-xs text-gray-400 mt-0.5">ဝင်ကြေး 2,000 Ks | ဆုကြေး 10,000 Ks</p>
-      </div>
-
-      <div class="relative w-56 h-56 mx-auto my-2 flex items-center justify-center">
-        <div class="pointer"></div>
-        <svg id="wheel" class="w-full h-full" viewBox="0 0 100 100">
-          <g transform="rotate(-90 50 50)">
-            <path d="M 50 50 L 50 0 A 50 50 0 0 1 97.55 34.55 Z" fill="#00ffcc"></path>
-            <path d="M 50 50 L 97.55 34.55 A 50 50 0 0 1 79.39 90.45 Z" fill="#3b82f6"></path>
-            <path d="M 50 50 L 79.39 90.45 A 50 50 0 0 1 20.61 90.45 Z" fill="#a855f7"></path>
-            <path d="M 50 50 L 20.61 90.45 A 50 50 0 0 1 2.45 34.55 Z" fill="#eab308"></path>
-            <path d="M 50 50 L 2.45 34.55 A 50 50 0 0 1 50 0 Z" fill="#ef4444"></path>
-          </g>
-        </svg>
-        <div class="absolute w-12 h-12 bg-gray-900 border-2 border-cyan-400 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow">ATK</div>
-      </div>
-
-      <div class="bg-gray-800/80 p-2.5 rounded-xl space-y-2 border border-gray-700/50">
-        <div class="flex justify-between items-center text-xs">
-          <span class="text-gray-400">ပါဝင်သူများ:</span>
-          <span id="spin-player-count" class="font-bold text-cyan-400">1 / 5 ယောက်</span>
-        </div>
-        <div id="spin-players-list" class="flex flex-wrap gap-1 justify-center text-[10px]">
-          <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full">Bot_Alpha</span>
-        </div>
-      </div>
-
-      <button id="join-spin-btn" onclick="joinSpinWheel()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold py-2.5 rounded-xl shadow text-xs">
-        2,000 Ks ဖြင့် စာရင်းပေးမည်
-      </button>
-    </div>
-  </div>
-
   <!-- Deposit Modal -->
   <div id="deposit-modal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
     <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl w-full max-w-sm space-y-3">
@@ -260,32 +223,6 @@
     </div>
   </div>
 
-  <!-- Withdraw Modal -->
-  <div id="withdraw-modal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl w-full max-w-sm space-y-3">
-      <div class="flex justify-between items-center">
-        <h3 class="font-bold text-sm text-white"><i class="fa-solid fa-money-bill-transfer text-cyan-400"></i> ငွေထုတ်မည်</h3>
-        <button onclick="closeModal('withdraw-modal')" class="text-gray-400">&times;</button>
-      </div>
-      <input type="tel" placeholder="KPay / Wave ဖုန်းနံပါတ်" class="w-full bg-gray-800 border border-gray-700 text-white p-2 rounded text-xs">
-      <input type="number" placeholder="ထုတ်မည့် ငွေပမာဏ" class="w-full bg-gray-800 border border-gray-700 text-white p-2 rounded text-xs">
-      <button onclick="alert('ငွေထုတ်ယူမှု တောင်းဆိုပြီးပါပြီ။'); closeModal('withdraw-modal');" class="w-full bg-cyan-500 text-black font-bold py-2 rounded text-xs">ငွေထုတ်ရန် တောင်းဆိုမည်</button>
-    </div>
-  </div>
-
-  <!-- History Modal -->
-  <div id="history-modal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl w-full max-w-sm space-y-3">
-      <div class="flex justify-between items-center">
-        <h3 class="font-bold text-sm text-white"><i class="fa-solid fa-clock-history text-cyan-400"></i> မှတ်တမ်းများ</h3>
-        <button onclick="closeModal('history-modal')" class="text-gray-400">&times;</button>
-      </div>
-      <div id="history-list" class="space-y-2 text-xs text-gray-300 max-h-48 overflow-y-auto">
-        <p class="text-gray-500 text-center">မှတ်တမ်းမရှိသေးပါ။</p>
-      </div>
-    </div>
-  </div>
-
   <script>
     let currentBalance = 0;
     let roomCardCount = 0;
@@ -295,11 +232,11 @@
     let clickCount = 0;
     let clickTimer = null;
 
-    // Secret Admin Click System (3 Click on Title)
+    // Secret Admin Click System (3 Click on Logo Only)
     function adminClickCheck() {
       clickCount++;
       clearTimeout(clickTimer);
-      if (clickCount === 3) {
+      if (clickCount >= 3) {
         clickCount = 0;
         let pass = prompt("Admin Secret Password ရိုက်ထည့်ပါ:");
         if (pass === "admin123") {
@@ -314,14 +251,13 @@
           alert("Password မှားယွင်းပါသည်။");
         }
       } else {
-        clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
+        clickTimer = setTimeout(() => { clickCount = 0; }, 1200);
       }
     }
 
     function loginWithGoogle() {
-      // Prototype Google Sign In Simulator
-      let fakeEmail = prompt("သင့် Google Email ရိုက်ထည့်ပါ:", "user@gmail.com");
-      if (fakeEmail) {
+      let fakeEmail = prompt("သင့် Google Email ကို ရိုက်ထည့်ပါ (ဥပမာ- user@gmail.com):");
+      if (fakeEmail && fakeEmail.trim() !== "") {
         currentPlayerName = fakeEmail.split('@')[0];
         document.getElementById('display-player-name').innerText = currentPlayerName;
         document.getElementById('display-player-id').innerText = "Google Account";
@@ -368,4 +304,16 @@
 
     function adminSubtractBalance() {
       let amt = parseInt(document.getElementById('admin-add-amt').value) || 0;
-      if (amt <= 0) return alert('ငွေပမာဏ ရိုက
+      if (amt <= 0) return alert('ငွေပမာဏ ရိုက်ထည့်ပါ။');
+      currentBalance = Math.max(0, currentBalance - amt);
+      document.getElementById('balance-txt').innerText = currentBalance.toLocaleString() + " Kyats";
+      alert(`Admin မှ ${amt.toLocaleString()} Kyats နှုတ်လိုက်ပါပြီ။`);
+      document.getElementById('admin-add-amt').value = '';
+    }
+
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+  </script>
+</body>
+  </html>
+  

@@ -1,1 +1,231 @@
-Write full HTML, Tailwind CSS, and JavaScript code for a mobile gaming tournament website called ATK in a single index.html file. Include dark gaming UI, Google login button, 0 Points balance display, 1v1 to 5v5 match cards, create/join room modal, match history, and screenshot result submission
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATK Gaming Tournament</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #0b0e14; color: #e2e8f0; font-family: sans-serif; }
+    .neon-text { color: #00ffcc; text-shadow: 0 0 5px rgba(0, 255, 204, 0.5); }
+    .glass-card { background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.08); }
+  </style>
+</head>
+<body class="pb-10 max-w-md mx-auto">
+
+  <!-- Step 1: Login Screen (Shown when logged out) -->
+  <div id="login-screen" class="min-h-screen flex flex-col justify-center items-center px-6 text-center">
+    <div class="w-20 h-20 bg-cyan-500/10 rounded-full flex items-center justify-center border border-cyan-500/30 mb-4">
+      <i class="fa-solid fa-gamepad text-4xl text-cyan-400"></i>
+    </div>
+    <h1 class="text-3xl font-black italic text-cyan-400 mb-2">ATK TOURNAMENT</h1>
+    <p class="text-xs text-gray-400 mb-8">Mobile Gaming Arena & Tournament Platform</p>
+    
+    <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-gray-100 text-gray-900 font-bold py-3 px-4 rounded-xl shadow-lg flex items-center justify-center gap-3 transition">
+      <i class="fa-brands fa-google text-red-500 text-lg"></i>
+      Google အကောင့်ဖြင့် Login ဝင်မည်
+    </button>
+  </div>
+
+  <!-- Step 2: Main Dashboard (Hidden until login) -->
+  <div id="main-dashboard" class="hidden">
+    
+    <!-- Top Navbar -->
+    <nav class="flex items-center justify-between p-4 bg-gray-900/90 sticky top-0 z-50 border-b border-gray-800">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-gamepad text-xl text-cyan-400"></i>
+        <h1 class="text-xl font-black italic text-cyan-400">ATK</h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <span id="user-name" class="text-xs text-gray-300 font-medium">Player</span>
+        <button onclick="logout()" class="text-xs text-red-400 bg-red-500/10 px-2 py-1 rounded border border-red-500/20">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- User Balance Header -->
+    <div class="p-4">
+      <div class="glass-card p-4 rounded-2xl relative overflow-hidden">
+        <div class="flex justify-between items-center mb-3">
+          <div>
+            <p class="text-xs text-gray-400">လက်ကျန်ငွေ</p>
+            <p class="text-2xl font-black neon-text">0 Kyats</p>
+          </div>
+          <button onclick="alert('စာရင်းမှတ်တမ်းများ ပြသမည်')" class="bg-gray-800 hover:bg-gray-700 text-xs text-cyan-400 px-3 py-1.5 rounded-lg border border-gray-700 flex items-center gap-1">
+            <i class="fa-solid fa-list-check"></i> စာရင်း
+          </button>
+        </div>
+
+        <!-- Deposit & Withdraw Buttons -->
+        <div class="grid grid-cols-2 gap-3 pt-2 border-t border-gray-800">
+          <button onclick="toggleModal('deposit-modal')" class="bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow">
+            <i class="fa-solid fa-wallet"></i> ငွေဖြည့်မည်
+          </button>
+          <button onclick="toggleModal('withdraw-modal')" class="bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-gray-700">
+            <i class="fa-solid fa-hand-holding-dollar"></i> ငွေထုတ်မည်
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Match Search & Categories -->
+    <div class="px-4 mb-4">
+      <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <button class="bg-cyan-500 text-black font-bold text-xs px-4 py-2 rounded-xl whitespace-nowrap">ပွဲအားလုံး</button>
+        <button class="bg-gray-900 text-gray-400 font-medium text-xs px-4 py-2 rounded-xl whitespace-nowrap border border-gray-800">1 v 1</button>
+        <button class="bg-gray-900 text-gray-400 font-medium text-xs px-4 py-2 rounded-xl whitespace-nowrap border border-gray-800">2 v 2</button>
+        <button class="bg-gray-900 text-gray-400 font-medium text-xs px-4 py-2 rounded-xl whitespace-nowrap border border-gray-800">3 v 3</button>
+        <button class="bg-gray-900 text-gray-400 font-medium text-xs px-4 py-2 rounded-xl whitespace-nowrap border border-gray-800">5 v 5</button>
+      </div>
+    </div>
+
+    <!-- Active Tournaments / Rooms List -->
+    <div class="px-4 space-y-3">
+      <h2 class="text-sm font-bold text-gray-300 flex items-center justify-between">
+        <span><i class="fa-solid fa-fire text-orange-500 mr-1"></i> ယှဉ်ပြိုင်ရန် ပွဲစဉ်များ (လူစောင့်နေသည်)</span>
+        <span class="text-xs text-cyan-400">Refresh</span>
+      </h2>
+
+      <!-- 1v1 Match Card -->
+      <div class="glass-card p-3.5 rounded-xl">
+        <div class="flex justify-between items-start mb-2">
+          <span class="bg-cyan-500/10 text-cyan-400 text-[10px] px-2 py-0.5 rounded font-bold border border-cyan-500/20">1v1 Solo</span>
+          <span class="text-xs font-bold text-yellow-400">1,000 Kyats</span>
+        </div>
+        <h3 class="font-bold text-white text-sm">Mobile Legends Fast Solo Duel</h3>
+        <p class="text-xs text-gray-400 mt-1 flex items-center gap-2">
+          <span><i class="fa-solid fa-users text-cyan-400"></i> လူစောင့်နေသည်: 1/2</span>
+        </p>
+        <div class="mt-3 flex justify-between items-center pt-2 border-t border-gray-800">
+          <span class="text-[11px] text-green-400 flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> Room Open</span>
+          <button onclick="alert('ပွဲထဲသို့ ဝင်ရောက်လိုက်ပါပြီ')" class="bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs px-4 py-1.5 rounded-lg">Join Room</button>
+        </div>
+      </div>
+
+      <!-- 2v2 Match Card -->
+      <div class="glass-card p-3.5 rounded-xl">
+        <div class="flex justify-between items-start mb-2">
+          <span class="bg-purple-500/10 text-purple-400 text-[10px] px-2 py-0.5 rounded font-bold border border-purple-500/20">2v2 Duo</span>
+          <span class="text-xs font-bold text-yellow-400">2,000 Kyats</span>
+        </div>
+        <h3 class="font-bold text-white text-sm">Custom Duo Arena</h3>
+        <p class="text-xs text-gray-400 mt-1 flex items-center gap-2">
+          <span><i class="fa-solid fa-users text-cyan-400"></i> လူစောင့်နေသည်: 3/4</span>
+        </p>
+        <div class="mt-3 flex justify-between items-center pt-2 border-t border-gray-800">
+          <span class="text-[11px] text-green-400 flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> Room Open</span>
+          <button onclick="alert('ပွဲထဲသို့ ဝင်ရောက်လိုက်ပါပြီ')" class="bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs px-4 py-1.5 rounded-lg">Join Room</button>
+        </div>
+      </div>
+
+      <!-- 5v5 Match Card -->
+      <div class="glass-card p-3.5 rounded-xl">
+        <div class="flex justify-between items-start mb-2">
+          <span class="bg-yellow-500/10 text-yellow-400 text-[10px] px-2 py-0.5 rounded font-bold border border-yellow-500/20">5v5 Squad</span>
+          <span class="text-xs font-bold text-yellow-400">5,000 Kyats</span>
+        </div>
+        <h3 class="font-bold text-white text-sm">ATK Full Squad Tournament</h3>
+        <p class="text-xs text-gray-400 mt-1 flex items-center gap-2">
+          <span><i class="fa-solid fa-users text-cyan-400"></i> လူစောင့်နေသည်: 8/10</span>
+        </p>
+        <div class="mt-3 flex justify-between items-center pt-2 border-t border-gray-800">
+          <span class="text-[11px] text-green-400 flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> Room Open</span>
+          <button onclick="alert('ပွဲထဲသို့ ဝင်ရောက်လိုက်ပါပြီ')" class="bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs px-4 py-1.5 rounded-lg">Join Room</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deposit Modal -->
+  <div id="deposit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-gray-900 border border-gray-800 p-5 rounded-2xl w-full max-w-sm">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-bold text-white text-sm"><i class="fa-solid fa-wallet text-cyan-400 mr-1"></i> ငွေဖြည့်မည်</h3>
+        <button onclick="toggleModal('deposit-modal')" class="text-gray-400 hover:text-white">&times;</button>
+      </div>
+      
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-gray-400 block mb-1">ငွေပေးချေမှု နည်းလမ်းရွေးပါ</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button class="bg-blue-600/20 border border-blue-500 text-blue-400 font-bold py-2 rounded-xl text-xs">KPay</button>
+            <button class="bg-yellow-600/20 border border-yellow-500 text-yellow-400 font-bold py-2 rounded-xl text-xs">Wave Pay</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 block mb-1">ငွေပမာဏ (Kyats)</label>
+          <input type="number" placeholder="ဥပမာ - 3000" class="w-full bg-gray-800 border border-gray-700 text-white p-2.5 rounded-xl text-xs focus:outline-none focus:border-cyan-400">
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 block mb-1">လုပ်ဆောင်ချက် အမှတ်စဉ် (Transaction ID / Screenshot)</label>
+          <input type="text" placeholder="Trans ID ထည့်ပါ" class="w-full bg-gray-800 border border-gray-700 text-white p-2.5 rounded-xl text-xs focus:outline-none focus:border-cyan-400 mb-2">
+          <input type="file" class="block w-full text-xs text-gray-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-gray-800 file:text-cyan-400">
+        </div>
+
+        <button onclick="alert('ငွေဖြည့်ပေးပို့မှု အောင်မြင်ပါသည်။ Admin စစ်ဆေးပေးပါမည်။'); toggleModal('deposit-modal');" class="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-2.5 rounded-xl text-xs mt-2">
+          ငွေဖြည့်ရန် တင်ပြမည်
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Withdraw Modal -->
+  <div id="withdraw-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-gray-900 border border-gray-800 p-5 rounded-2xl w-full max-w-sm">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-bold text-white text-sm"><i class="fa-solid fa-hand-holding-dollar text-cyan-400 mr-1"></i> ငွေထုတ်မည်</h3>
+        <button onclick="toggleModal('withdraw-modal')" class="text-gray-400 hover:text-white">&times;</button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-gray-400 block mb-1">ငွေထုတ်ယူမည့် နည်းလမ်း</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button class="bg-blue-600/20 border border-blue-500 text-blue-400 font-bold py-2 rounded-xl text-xs">KPay</button>
+            <button class="bg-yellow-600/20 border border-yellow-500 text-yellow-400 font-bold py-2 rounded-xl text-xs">Wave Pay</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 block mb-1">လက်ခံမည့် ဖုန်းနံပါတ်</label>
+          <input type="tel" placeholder="09xxxxxxxxx" class="w-full bg-gray-800 border border-gray-700 text-white p-2.5 rounded-xl text-xs focus:outline-none focus:border-cyan-400">
+        </div>
+
+        <div>
+          <label class="text-xs text-gray-400 block mb-1">ထုတ်ယူမည့် ငွေပမာဏ (Kyats)</label>
+          <input type="number" placeholder="ဥပမာ - 5000" class="w-full bg-gray-800 border border-gray-700 text-white p-2.5 rounded-xl text-xs focus:outline-none focus:border-cyan-400">
+        </div>
+
+        <button onclick="alert('ငွေထုတ်ယူမှု လျှောက်လွှာ တင်ပြီးပါပြီ။'); toggleModal('withdraw-modal');" class="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-2.5 rounded-xl text-xs mt-2">
+          ငွေထုတ်ရန် တောင်းဆိုမည်
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script Actions -->
+  <script>
+    function loginWithGoogle() {
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('main-dashboard').classList.remove('hidden');
+    }
+
+    function logout() {
+      document.getElementById('main-dashboard').classList.add('hidden');
+      document.getElementById('login-screen').classList.remove('hidden');
+    }
+
+    function toggleModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.classList.toggle('hidden');
+    }
+  </script>
+</body>
+  </html>
+        
+
+          

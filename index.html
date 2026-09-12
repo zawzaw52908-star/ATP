@@ -10,20 +10,60 @@
     body { background-color: #0b0e14; color: #e2e8f0; font-family: sans-serif; }
     .neon-text { color: #00ffcc; text-shadow: 0 0 5px rgba(0, 255, 204, 0.5); }
     .glass-card { background: rgba(17, 24, 39, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); }
+    
+    #wheel {
+      transition: transform 4s cubic-bezier(0.15, 0.99, 0.28, 1);
+      border-radius: 50%;
+    }
+    .pointer {
+      width: 0; 
+      height: 0; 
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 24px solid #ff0055;
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+    }
   </style>
 </head>
 <body class="pb-10 max-w-md mx-auto relative min-h-screen">
 
-  <!-- Login Screen -->
+  <!-- MLBB / Admin Login Screen -->
   <div id="login-screen" class="min-h-screen flex flex-col justify-center items-center px-6 text-center">
-    <div class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center border border-cyan-500/30 mb-4">
+    <div class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center border border-cyan-500/30 mb-3">
       <i class="fa-solid fa-gamepad text-3xl text-cyan-400"></i>
     </div>
     <h1 class="text-2xl font-black italic text-cyan-400 mb-1">ATK TOURNAMENT</h1>
-    <p class="text-xs text-gray-400 mb-6">Mobile Gaming Platform</p>
-    <button onclick="login()" class="w-full bg-white text-gray-900 font-bold py-3 rounded-xl shadow text-sm flex items-center justify-center gap-2">
-      <i class="fa-brands fa-google text-red-500"></i> Google Account ဖြင့် Login ဝင်မည်
-    </button>
+    <p class="text-xs text-gray-400 mb-6">Mobile Legends Gaming Platform</p>
+    
+    <div class="w-full glass-card p-5 rounded-2xl space-y-4 text-left border border-gray-800">
+      <h2 class="text-sm font-bold text-white text-center mb-2"><i class="fa-solid fa-user-shield text-cyan-400"></i> Login ဝင်ရောက်ရန်</h2>
+      
+      <div>
+        <label class="text-xs text-gray-400 block mb-1">In-Game Name / Admin Password</label>
+        <input id="mlbb-name" type="text" placeholder="ဂိမ်းနာမည် (သို့) Admin Pass" class="w-full bg-gray-900 border border-gray-700 text-white p-2.5 rounded-lg text-xs focus:outline-none focus:border-cyan-400">
+      </div>
+
+      <div id="user-fields" class="grid grid-cols-3 gap-2">
+        <div class="col-span-2">
+          <label class="text-xs text-gray-400 block mb-1">Game ID</label>
+          <input id="mlbb-id" type="number" placeholder="12345678" class="w-full bg-gray-900 border border-gray-700 text-white p-2.5 rounded-lg text-xs focus:outline-none focus:border-cyan-400">
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 block mb-1">Server ID</label>
+          <input id="mlbb-server" type="number" placeholder="1234" class="w-full bg-gray-900 border border-gray-700 text-white p-2.5 rounded-lg text-xs focus:outline-none focus:border-cyan-400">
+        </div>
+      </div>
+
+      <p class="text-[10px] text-gray-500 italic">* Admin အဖြစ်ဝင်ရန် ဂိမ်းနာမည်နေရာတွင် pass: <span class="text-cyan-400 font-bold">admin123</span> ဟု ရိုက်ထည့်ပါ။</p>
+
+      <button onclick="loginWithMLBB()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 rounded-xl shadow text-xs mt-2 transition">
+        Login ဝင်မည်
+      </button>
+    </div>
   </div>
 
   <!-- Main App -->
@@ -33,17 +73,50 @@
       <div class="flex items-center gap-2">
         <i class="fa-solid fa-gamepad text-cyan-400"></i>
         <h1 class="text-lg font-black text-cyan-400">ATK</h1>
+        <span id="admin-badge" class="hidden bg-red-500/20 text-red-400 border border-red-500/40 text-[9px] font-bold px-1.5 py-0.5 rounded">ADMIN MODE</span>
       </div>
-      <div class="flex items-center gap-3">
-        <!-- Room Card Counter Display -->
-        <div class="flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/30 px-2.5 py-1 rounded-full">
+      <div class="flex items-center gap-2">
+        <!-- Player Info Display -->
+        <div class="text-right">
+          <p id="display-player-name" class="text-xs font-bold text-white">Player</p>
+          <p id="display-player-id" class="text-[10px] text-gray-400">ID: -</p>
+        </div>
+        <!-- Room Card Display -->
+        <div class="flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/30 px-2 py-1 rounded-full">
           <i class="fa-solid fa-ticket text-yellow-400 text-xs"></i>
           <span class="text-xs font-bold text-yellow-400" id="room-card-count">0</span>
-          <span class="text-[10px] text-gray-400">Cards</span>
         </div>
         <button onclick="logout()" class="text-xs text-red-400 ml-1"><i class="fa-solid fa-right-from-bracket"></i></button>
       </div>
     </nav>
+
+    <!-- Admin Quick Controller (Visible Only to Admin) -->
+    <div id="admin-panel" class="hidden p-4 bg-red-950/30 border-b border-red-500/30 space-y-2">
+      <h3 class="text-xs font-bold text-red-400"><i class="fa-solid fa-user-gear"></i> Admin Balance Controller (ငွေထည့်/နှုတ် စနစ်)</h3>
+      <div class="flex gap-2">
+        <input id="admin-add-amt" type="number" placeholder="ငွေပမာဏ (Ks)" class="w-full bg-gray-900 border border-gray-700 text-white p-2 rounded text-xs">
+        <button onclick="adminAddBalance()" class="bg-green-500 text-black font-bold text-xs px-3 rounded whitespace-nowrap">+ ငွေထည့်မည်</button>
+        <button onclick="adminSubtractBalance()" class="bg-red-500 text-white font-bold text-xs px-3 rounded whitespace-nowrap">- ငွေနှုတ်မည်</button>
+      </div>
+    </div>
+
+    <!-- Always Visible Floating/Sticky Spin Wheel Banner -->
+    <div class="sticky top-[61px] z-30 px-4 pt-3 pb-1 bg-gray-950/90 backdrop-blur">
+      <div class="glass-card p-2.5 rounded-xl border border-cyan-500/40 flex items-center justify-between bg-gradient-to-r from-cyan-950/40 to-purple-950/40 shadow-lg">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 bg-cyan-500/20 rounded-full flex items-center justify-center border border-cyan-400/50 animate-pulse">
+            <i class="fa-solid fa-arrows-spin text-cyan-400 text-lg"></i>
+          </div>
+          <div>
+            <h4 class="text-xs font-black text-cyan-300">SPIN WHEEL KICK-OFF</h4>
+            <p class="text-[10px] text-gray-300">ဝင်ကြေး 2,000 Ks (၅ ယောက်ပြည့်လှည့်)</p>
+          </div>
+        </div>
+        <button onclick="openModal('spin-modal')" class="bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-300 hover:to-cyan-400 text-black font-extrabold text-xs px-3 py-2 rounded-lg shadow-md transition">
+          လှည့်မည်
+        </button>
+      </div>
+    </div>
 
     <!-- Balance & Actions -->
     <div class="p-4 space-y-3">
@@ -141,6 +214,50 @@
     </div>
   </div>
 
+  <!-- Spin Wheel Modal -->
+  <div id="spin-modal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-gray-900 border border-gray-800 p-5 rounded-2xl w-full max-w-sm text-center relative space-y-4">
+      <button onclick="closeModal('spin-modal')" class="absolute top-3 right-3 text-gray-400 text-lg">&times;</button>
+      
+      <div>
+        <h3 class="font-black text-lg text-cyan-400"><i class="fa-solid fa-dharmachakra"></i> 5-Player Spin Wheel</h3>
+        <p class="text-xs text-gray-400 mt-0.5">ဝင်ကြေး 2,000 Ks | ဆုကြေး 10,000 Ks</p>
+      </div>
+
+      <!-- Wheel Graphic -->
+      <div class="relative w-56 h-56 mx-auto my-2 flex items-center justify-center">
+        <div class="pointer"></div>
+        <svg id="wheel" class="w-full h-full" viewBox="0 0 100 100">
+          <g transform="rotate(-90 50 50)">
+            <path d="M 50 50 L 50 0 A 50 50 0 0 1 97.55 34.55 Z" fill="#00ffcc"></path>
+            <path d="M 50 50 L 97.55 34.55 A 50 50 0 0 1 79.39 90.45 Z" fill="#3b82f6"></path>
+            <path d="M 50 50 L 79.39 90.45 A 50 50 0 0 1 20.61 90.45 Z" fill="#a855f7"></path>
+            <path d="M 50 50 L 20.61 90.45 A 50 50 0 0 1 2.45 34.55 Z" fill="#eab308"></path>
+            <path d="M 50 50 L 2.45 34.55 A 50 50 0 0 1 50 0 Z" fill="#ef4444"></path>
+          </g>
+        </svg>
+        <div class="absolute w-12 h-12 bg-gray-900 border-2 border-cyan-400 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow">
+          ATK
+        </div>
+      </div>
+
+      <!-- Player Slots -->
+      <div class="bg-gray-800/80 p-2.5 rounded-xl space-y-2 border border-gray-700/50">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-gray-400">ပါဝင်သူများ:</span>
+          <span id="spin-player-count" class="font-bold text-cyan-400">1 / 5 ယောက်</span>
+        </div>
+        <div id="spin-players-list" class="flex flex-wrap gap-1 justify-center text-[10px]">
+          <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full">Bot_Alpha</span>
+        </div>
+      </div>
+
+      <button id="join-spin-btn" onclick="joinSpinWheel()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold py-2.5 rounded-xl shadow text-xs">
+        2,000 Ks ဖြင့် စာရင်းပေးမည်
+      </button>
+    </div>
+  </div>
+
   <!-- Deposit Modal -->
   <div id="deposit-modal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
     <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl w-full max-w-sm space-y-3">
@@ -155,9 +272,19 @@
           <button class="bg-yellow-600/20 border border-yellow-500 text-yellow-400 font-bold py-1.5 rounded text-xs">Wave Pay</button>
         </div>
       </div>
-      <input id="dep-amt" type="number" placeholder="ဖြည့်မည့် ငွေပမာဏ (Kyats)" class="w-full bg-gray-800 border border-gray-700 text-white p-2 rounded text-xs">
-      <input type="text" placeholder="Trx ID / နောက်ဆုံးဂဏန်း ၄ လုံး" class="w-full bg-gray-800 border border-gray-700 text-white p-2 rounded text-xs">
-      <button onclick="submitDeposit()" class="w-full bg-cyan-500 text-black font-bold py-2 rounded text-xs">ငွေဖြည့်မည် တင်ပြမည်</button>
+      <div>
+        <label class="text-xs text-gray-400 block mb-1">ဖြည့်မည့် ငွေပမာဏ (Kyats)</label>
+        <input id="dep-amt" type="number" placeholder="e.g. 5000" class="w-full bg-gray-800 border border-gray-700 text-white p-2 rounded text-xs">
+      </div>
+      <div>
+        <label class="text-xs text-gray-400 block mb-1">Trx ID (နောက်ဆုံး ၆ လုံး)</label>
+        <input type="text" placeholder="e.g. 987654" class="w-full bg-gray-800 border border-gray-700 text-white p-2 rounded text-xs">
+      </div>
+      <div>
+        <label class="text-xs text-gray-400 block mb-1"><i class="fa-solid fa-file-invoice text-yellow-400"></i> ငွေလွှဲပြေစာ Screenshot တင်ရန်</label>
+        <input id="dep-receipt" type="file" accept="image/*" class="w-full text-xs text-gray-400 border border-gray-700 rounded p-1 bg-gray-800">
+      </div>
+      <button onclick="submitDeposit()" class="w-full bg-cyan-500 text-black font-bold py-2 rounded text-xs">ငွေဖြည့်ပြေစာ တင်သွင်းမည်</button>
     </div>
   </div>
 
@@ -187,7 +314,7 @@
     </div>
   </div>
 
-  <!-- Join Match Setup Modal (Hero / Role Selection) -->
+  <!-- Join Match Setup Modal -->
   <div id="join-setup-modal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
     <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl w-full max-w-sm space-y-3">
       <div class="flex justify-between items-center">
@@ -215,125 +342,4 @@
           <label class="bg-gray-800 p-2 rounded border border-gray-700 text-xs flex items-center gap-2 cursor-pointer">
             <input type="radio" name="role_rule" value="Same Role" checked class="accent-cyan-400">
             <span>Role တူ (Ass/Mage)</span>
-          </label>
-          <label class="bg-gray-800 p-2 rounded border border-gray-700 text-xs flex items-center gap-2 cursor-pointer">
-            <input type="radio" name="role_rule" value="Any Role" class="accent-cyan-400">
-            <span>Role ကြိုက်တာယူ</span>
-          </label>
-        </div>
-      </div>
-
-      <button onclick="confirmJoin()" class="w-full bg-cyan-500 text-black font-bold py-2 rounded text-xs mt-2">1 Room Card ဖြင့် အတည်ပြု ဝင်မည်</button>
-    </div>
-  </div>
-
-  <!-- Room Details & Screenshot Upload Modal -->
-  <div id="room-modal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl w-full max-w-sm space-y-3">
-      <div class="flex justify-between items-center">
-        <h3 id="room-title" class="font-bold text-sm text-white">Room Details</h3>
-        <button onclick="closeModal('room-modal')" class="text-gray-400">&times;</button>
-      </div>
-      <div class="bg-gray-800 p-3 rounded text-xs space-y-1">
-        <p class="text-gray-300">Room ID: <span class="text-cyan-400 font-bold">ATK-9920</span></p>
-        <p class="text-gray-300">Password: <span class="text-yellow-400 font-bold">123456</span></p>
-        <p class="text-xs text-cyan-300 pt-1">Rules: <span id="selected-rules" class="text-white font-semibold"></span></p>
-      </div>
-      <div class="border-t border-gray-800 pt-2 space-y-2">
-        <p class="text-xs text-gray-400">ပွဲပြီးပါက Screenshot တင်ရန်:</p>
-        <input type="file" class="block w-full text-xs text-gray-400">
-        <button onclick="alert('Screenshot တင်ပြီးပါပြီ။ Admin စစ်ဆေးပြီး အနိုင်ငွေထည့်ပေးပါမည်။'); closeModal('room-modal');" class="w-full bg-green-500 text-black font-bold py-1.5 rounded text-xs">Screenshot တင်မည်</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    let currentBalance = 0;
-    let roomCardCount = 0;
-    let selectedMatchTitle = "";
-
-    function login() {
-      document.getElementById('login-screen').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
-    }
-    function logout() {
-      document.getElementById('app').classList.add('hidden');
-      document.getElementById('login-screen').classList.remove('hidden');
-    }
-    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-    function submitDeposit() {
-      let amt = parseInt(document.getElementById('dep-amt').value) || 0;
-      if(amt > 0) {
-        currentBalance += amt;
-        document.getElementById('balance-txt').innerText = currentBalance.toLocaleString() + " Kyats";
-        let h = document.getElementById('history-list');
-        if(h.innerText.includes('မှတ်တမ်းမရှိသေးပါ')) h.innerHTML = '';
-        h.innerHTML += `<div class="p-2 bg-gray-800 rounded flex justify-between"><span>ငွေဖြည့်: +${amt} Ks</span><span class="text-green-400">Success</span></div>`;
-        alert('ငွေဖြည့်သွင်းမှု အောင်မြင်ပါသည်။');
-        closeModal('deposit-modal');
-      } else {
-        alert('ငွေပမာဏ မှန်ကန်စွာ ထည့်ပါ။');
-      }
-    }
-
-    function buyRoomCard() {
-      const cardPrice = 1000;
-      if (currentBalance >= cardPrice) {
-        currentBalance -= cardPrice;
-        roomCardCount += 1;
-        document.getElementById('balance-txt').innerText = currentBalance.toLocaleString() + " Kyats";
-        document.getElementById('room-card-count').innerText = roomCardCount;
-        
-        let h = document.getElementById('history-list');
-        if(h.innerText.includes('မှတ်တမ်းမရှိသေးပါ')) h.innerHTML = '';
-        h.innerHTML += `<div class="p-2 bg-gray-800 rounded flex justify-between"><span>Room Card ဝယ်ယူခြင်း: -1,000 Ks</span><span class="text-yellow-400">+1 Card</span></div>`;
-        
-        alert('Room Card ၁ ခု အောင်မြင်စွာ ဝယ်ယူပြီးပါပြီ။');
-      } else {
-        alert('လက်ကျန်ငွေ မလုံလောက်ပါ။ (Room Card ၁ ခု = 1,000 Kyats) ငွေအရင်ဖြည့်ပါ။');
-      }
-    }
-
-    function openJoinMatch(title, requiredCards) {
-      if (roomCardCount < requiredCards) {
-        alert('သင့်တွင် Room Card မလုံလောက်ပါ။ ပွဲဝင်ရန် Room Card အရင်ဝယ်ယူပါ။');
-        return;
-      }
-      selectedMatchTitle = title;
-      document.getElementById('setup-title').innerText = title;
-      openModal('join-setup-modal');
-    }
-
-    function confirmJoin() {
-      if (roomCardCount >= 1) {
-        roomCardCount -= 1;
-        document.getElementById('room-card-count').innerText = roomCardCount;
-
-        let heroRule = document.querySelector('input[name="hero_rule"]:checked').value;
-        let roleRule = document.querySelector('input[name="role_rule"]:checked').value;
-        
-        closeModal('join-setup-modal');
-        document.getElementById('room-title').innerText = selectedMatchTitle;
-        document.getElementById('selected-rules').innerText = heroRule + " | " + roleRule;
-        openModal('room-modal');
-      } else {
-        alert('Room Card မလုံလောက်ပါ။');
-      }
-    }
-
-    function filterMatch(type) {
-      let items = document.querySelectorAll('.match-item');
-      items.forEach(el => {
-        if(type === 'all' || el.classList.contains(type)) {
-          el.style.display = 'block';
-        } else {
-          el.style.display = 'none';
-        }
-      });
-    }
-  </script>
-</body>
-  </html>
-
+          </label

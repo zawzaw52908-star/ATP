@@ -15,93 +15,42 @@
       transition: transform 4s cubic-bezier(0.15, 0.99, 0.28, 1);
       border-radius: 50%;
     }
-    .pointer {
-      width: 0; 
-      height: 0; 
-      border-left: 12px solid transparent;
-      border-right: 12px solid transparent;
-      border-top: 24px solid #ff0055;
-      position: absolute;
-      top: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 20;
-    }
   </style>
 </head>
 <body class="pb-10 max-w-md mx-auto relative min-h-screen">
 
-  <!-- MLBB / Google Login Screen -->
-  <div id="login-screen" class="min-h-screen flex flex-col justify-center items-center px-6 text-center">
-    
-    <!-- Admin Trigger Header -->
-    <div class="p-2 border border-cyan-500/20 rounded-2xl bg-cyan-950/10 mb-4">
-      <!-- ဒီ Logo (ဂိမ်းလက်ကိုင်ပုံ) ကိုပဲ ၃ ချက်နှိပ်ရပါမည် -->
-      <div onclick="adminClickCheck()" class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center border border-cyan-500/30 mb-2 mx-auto cursor-pointer active:scale-90 transition select-none">
-        <i class="fa-solid fa-gamepad text-3xl text-cyan-400"></i>
-      </div>
-      <h1 class="text-2xl font-black italic text-cyan-400">ATK TOURNAMENT</h1>
-      <p class="text-[10px] text-cyan-500/60 mt-1">(Admin ဝင်ရန် အပေါ်မှ Logo ကို ၃ ချက်နှိပ်ပါ)</p>
-    </div>
-    
-    <div class="w-full glass-card p-5 rounded-2xl space-y-4 text-left border border-gray-800">
-      <h2 class="text-sm font-bold text-white text-center mb-2"><i class="fa-solid fa-user-shield text-cyan-400"></i> Login ဝင်ရောက်ရန်</h2>
-      
-      <!-- Working Google Sign-In Button -->
-      <button type="button" onclick="loginWithGoogle()" class="w-full bg-white hover:bg-gray-100 text-gray-800 font-bold py-3 rounded-xl shadow text-xs flex items-center justify-center gap-2 border border-gray-300 active:scale-95 transition cursor-pointer">
-        <svg class="w-4 h-4" viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-        </svg>
-        <span>Continue with Google</span>
-      </button>
-
-      <div class="flex items-center my-3">
-        <div class="flex-grow border-t border-gray-800"></div>
-        <span class="px-2 text-[10px] text-gray-500">သို့မဟုတ် MLBB ID ဖြင့်</span>
-        <div class="flex-grow border-t border-gray-800"></div>
-      </div>
-
-      <div id="user-fields" class="grid grid-cols-3 gap-2">
-        <div class="col-span-2">
-          <label class="text-xs text-gray-400 block mb-1">Game ID</label>
-          <input id="mlbb-id" type="number" placeholder="12345678" class="w-full bg-gray-900 border border-gray-700 text-white p-2.5 rounded-lg text-xs focus:outline-none focus:border-cyan-400">
-        </div>
-        <div>
-          <label class="text-xs text-gray-400 block mb-1">Server ID</label>
-          <input id="mlbb-server" type="number" placeholder="1234" class="w-full bg-gray-900 border border-gray-700 text-white p-2.5 rounded-lg text-xs focus:outline-none focus:border-cyan-400">
-        </div>
-      </div>
-
-      <button type="button" onclick="loginWithMLBB()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-3 rounded-xl shadow text-xs mt-2 transition">
-        ဂိမ်းအကောင့်ဖြင့် Login ဝင်မည်
-      </button>
-    </div>
-  </div>
-
-  <!-- Main App -->
-  <div id="app" class="hidden">
+  <!-- Main App (Direct Entry) -->
+  <div id="app">
     <!-- Navbar -->
     <nav class="flex items-center justify-between p-4 bg-gray-900 sticky top-0 z-40 border-b border-gray-800">
       <div class="flex items-center gap-2">
-        <i class="fa-solid fa-gamepad text-cyan-400"></i>
-        <h1 class="text-lg font-black text-cyan-400">ATK</h1>
-        <span id="admin-badge" class="hidden bg-red-500/20 text-red-400 border border-red-500/40 text-[9px] font-bold px-1.5 py-0.5 rounded">ADMIN MODE</span>
+        <!-- ဂိမ်း Logo ကို ၃ ချက်နှိပ်ပါက Admin Mode ဝင်နိုင်သည် -->
+        <div onclick="adminClickCheck()" class="w-9 h-9 bg-cyan-500/10 rounded-full flex items-center justify-center border border-cyan-500/30 cursor-pointer active:scale-90 transition select-none">
+          <i class="fa-solid fa-gamepad text-cyan-400"></i>
+        </div>
+        <div>
+          <h1 class="text-base font-black text-cyan-400 leading-none">ATK</h1>
+          <span id="admin-badge" class="hidden bg-red-500/20 text-red-400 border border-red-500/40 text-[8px] font-bold px-1 rounded">ADMIN MODE</span>
+        </div>
       </div>
+      
       <div class="flex items-center gap-2">
         <!-- Player Info Display -->
-        <div class="text-right">
-          <p id="display-player-name" class="text-xs font-bold text-white">Player</p>
-          <p id="display-player-id" class="text-[10px] text-gray-400">ID: -</p>
+        <div id="player-info-container" class="text-right">
+          <p id="display-player-name" class="text-xs font-bold text-gray-400">Guest User</p>
+          <p id="display-player-id" class="text-[10px] text-gray-500">Not Logged In</p>
         </div>
+
         <!-- Room Card Display -->
         <div class="flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/30 px-2 py-1 rounded-full">
           <i class="fa-solid fa-ticket text-yellow-400 text-xs"></i>
           <span class="text-xs font-bold text-yellow-400" id="room-card-count">0</span>
         </div>
-        <button onclick="logout()" class="text-xs text-red-400 ml-1"><i class="fa-solid fa-right-from-bracket"></i></button>
+
+        <!-- Login / Logout Button -->
+        <button id="auth-btn" onclick="openModal('login-modal')" class="bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs px-2.5 py-1 rounded-lg transition">
+          Login ဝင်ရန်
+        </button>
       </div>
     </nav>
 
@@ -146,10 +95,10 @@
           </button>
         </div>
         <div class="grid grid-cols-2 gap-2 pt-2 border-t border-gray-800">
-          <button onclick="openModal('deposit-modal')" class="bg-cyan-500 text-black font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1">
+          <button onclick="checkAuthAndOpen('deposit-modal')" class="bg-cyan-500 text-black font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1">
             <i class="fa-solid fa-wallet"></i> ငွေဖြည့်မည်
           </button>
-          <button onclick="openModal('withdraw-modal')" class="bg-gray-800 text-white font-bold py-2 rounded-lg text-xs border border-gray-700 flex items-center justify-center gap-1">
+          <button onclick="checkAuthAndOpen('withdraw-modal')" class="bg-gray-800 text-white font-bold py-2 rounded-lg text-xs border border-gray-700 flex items-center justify-center gap-1">
             <i class="fa-solid fa-money-bill-transfer"></i> ငွေထုတ်မည်
           </button>
         </div>
@@ -194,9 +143,51 @@
         <p class="text-xs text-gray-400 mt-1">လူစောင့်နေသည်: 1/2</p>
         <div class="mt-2 flex justify-between items-center pt-2 border-t border-gray-800">
           <span class="text-[10px] text-green-400"><i class="fa-solid fa-circle text-[6px]"></i> Room Open</span>
-          <button onclick="openJoinMatch('1v1 MLBB Solo', 1)" class="bg-cyan-500 text-black font-bold text-xs px-3 py-1 rounded">Join Room</button>
+          <button onclick="checkAuthAndOpen('join')" class="bg-cyan-500 text-black font-bold text-xs px-3 py-1 rounded">Join Room</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Login Modal (Pop-up) -->
+  <div id="login-modal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-gray-900 border border-gray-800 p-5 rounded-2xl w-full max-w-sm space-y-4">
+      <div class="flex justify-between items-center">
+        <h2 class="text-sm font-bold text-white"><i class="fa-solid fa-user-shield text-cyan-400"></i> Login ဝင်ရောက်ရန်</h2>
+        <button onclick="closeModal('login-modal')" class="text-gray-400 text-lg">&times;</button>
+      </div>
+      
+      <!-- Google Sign-In Button -->
+      <button type="button" onclick="loginWithGoogle()" class="w-full bg-white hover:bg-gray-100 text-gray-800 font-bold py-2.5 rounded-xl shadow text-xs flex items-center justify-center gap-2 border border-gray-300 active:scale-95 transition cursor-pointer">
+        <svg class="w-4 h-4" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span>Continue with Google</span>
+      </button>
+
+      <div class="flex items-center my-2">
+        <div class="flex-grow border-t border-gray-800"></div>
+        <span class="px-2 text-[10px] text-gray-500">သို့မဟုတ် MLBB ID ဖြင့်</span>
+        <div class="flex-grow border-t border-gray-800"></div>
+      </div>
+
+      <div id="user-fields" class="grid grid-cols-3 gap-2">
+        <div class="col-span-2">
+          <label class="text-xs text-gray-400 block mb-1">Game ID</label>
+          <input id="mlbb-id" type="number" placeholder="12345678" class="w-full bg-gray-800 border border-gray-700 text-white p-2 rounded-lg text-xs focus:outline-none focus:border-cyan-400">
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 block mb-1">Server ID</label>
+          <input id="mlbb-server" type="number" placeholder="1234" class="w-full bg-gray-800 border border-gray-700 text-white p-2 rounded-lg text-xs focus:outline-none focus:border-cyan-400">
+        </div>
+      </div>
+
+      <button type="button" onclick="loginWithMLBB()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-2.5 rounded-xl shadow text-xs transition">
+        ဂိမ်းအကောင့်ဖြင့် Login ဝင်မည်
+      </button>
     </div>
   </div>
 
@@ -219,20 +210,20 @@
         <label class="text-xs text-gray-400 block mb-1">ငွေလွှဲပြေစာ Screenshot</label>
         <input id="dep-receipt" type="file" accept="image/*" class="w-full text-xs text-gray-400 border border-gray-700 rounded p-1 bg-gray-800">
       </div>
-      <button onclick="submitDeposit()" class="w-full bg-cyan-500 text-black font-bold py-2 rounded text-xs">ငွေဖြည့်ပြေစာ တင်သွင်းမည်</button>
+      <button onclick="closeModal('deposit-modal'); alert('ငွေဖြည့်ပြေစာ တင်ပြီးပါပြီ။ Admin စစ်ဆေးပေးပါမည်။');" class="w-full bg-cyan-500 text-black font-bold py-2 rounded text-xs">ငွေဖြည့်ပြေစာ တင်သွင်းမည်</button>
     </div>
   </div>
 
   <script>
     let currentBalance = 0;
     let roomCardCount = 0;
-    let selectedMatchTitle = "";
-    let currentPlayerName = "Player";
+    let isLoggedIn = false;
+    let currentPlayerName = "Guest";
     let isAdmin = false;
     let clickCount = 0;
     let clickTimer = null;
 
-    // Secret Admin Click System (3 Click on Logo Only)
+    // Secret Admin Click System (3 Clicks on Top Left Logo)
     function adminClickCheck() {
       clickCount++;
       clearTimeout(clickTimer);
@@ -241,12 +232,15 @@
         let pass = prompt("Admin Secret Password ရိုက်ထည့်ပါ:");
         if (pass === "admin123") {
           isAdmin = true;
+          isLoggedIn = true;
           currentPlayerName = "ATK Owner (Admin)";
           document.getElementById('admin-badge').classList.remove('hidden');
           document.getElementById('admin-panel').classList.remove('hidden');
           document.getElementById('display-player-name').innerText = "Admin Account";
+          document.getElementById('display-player-name').classList.remove('text-gray-400');
+          document.getElementById('display-player-name').classList.add('text-white');
           document.getElementById('display-player-id').innerText = "Role: Owner";
-          enterApp();
+          updateAuthUI();
         } else if (pass) {
           alert("Password မှားယွင်းပါသည်။");
         }
@@ -258,10 +252,14 @@
     function loginWithGoogle() {
       let fakeEmail = prompt("သင့် Google Email ကို ရိုက်ထည့်ပါ (ဥပမာ- user@gmail.com):");
       if (fakeEmail && fakeEmail.trim() !== "") {
+        isLoggedIn = true;
         currentPlayerName = fakeEmail.split('@')[0];
         document.getElementById('display-player-name').innerText = currentPlayerName;
+        document.getElementById('display-player-name').classList.remove('text-gray-400');
+        document.getElementById('display-player-name').classList.add('text-white');
         document.getElementById('display-player-id').innerText = "Google Account";
-        enterApp();
+        updateAuthUI();
+        closeModal('login-modal');
       }
     }
 
@@ -274,23 +272,51 @@
         return;
       }
 
+      isLoggedIn = true;
       currentPlayerName = "Player_" + gameId.substring(0, 4);
       document.getElementById('display-player-name').innerText = currentPlayerName;
+      document.getElementById('display-player-name').classList.remove('text-gray-400');
+      document.getElementById('display-player-name').classList.add('text-white');
       document.getElementById('display-player-id').innerText = `ID: ${gameId} (${serverId})`;
-      enterApp();
+      updateAuthUI();
+      closeModal('login-modal');
     }
 
-    function enterApp() {
-      document.getElementById('login-screen').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
+    function updateAuthUI() {
+      let authBtn = document.getElementById('auth-btn');
+      if (isLoggedIn) {
+        authBtn.innerText = "Logout";
+        authBtn.classList.remove('bg-cyan-500', 'text-black');
+        authBtn.classList.add('bg-red-500/20', 'text-red-400', 'border', 'border-red-500/30');
+        authBtn.onclick = logout;
+      } else {
+        authBtn.innerText = "Login ဝင်ရန်";
+        authBtn.classList.remove('bg-red-500/20', 'text-red-400', 'border', 'border-red-500/30');
+        authBtn.classList.add('bg-cyan-500', 'text-black');
+        authBtn.onclick = function() { openModal('login-modal'); };
+      }
     }
 
     function logout() {
+      isLoggedIn = false;
       isAdmin = false;
       document.getElementById('admin-badge').classList.add('hidden');
       document.getElementById('admin-panel').classList.add('hidden');
-      document.getElementById('app').classList.add('hidden');
-      document.getElementById('login-screen').classList.remove('hidden');
+      document.getElementById('display-player-name').innerText = "Guest User";
+      document.getElementById('display-player-name').classList.add('text-gray-400');
+      document.getElementById('display-player-id').innerText = "Not Logged In";
+      updateAuthUI();
+    }
+
+    function checkAuthAndOpen(modalId) {
+      if (!isLoggedIn) {
+        alert("ကျေးဇူးပြု၍ အရင် Login ဝင်ရောက်ပါ။");
+        openModal('login-modal');
+      } else if (modalId === 'join') {
+        alert("Room ဝင်ရောက်ရန် ပြင်ဆင်နေပါသည်။");
+      } else {
+        openModal(modalId);
+      }
     }
 
     function adminAddBalance() {
@@ -311,9 +337,26 @@
       document.getElementById('admin-add-amt').value = '';
     }
 
+    function buyRoomCard() {
+      if (!isLoggedIn) {
+        alert("ကျေးဇူးပြု၍ အရင် Login ဝင်ရောက်ပါ။");
+        openModal('login-modal');
+        return;
+      }
+      if (currentBalance >= 1000) {
+        currentBalance -= 1000;
+        roomCardCount += 1;
+        document.getElementById('balance-txt').innerText = currentBalance.toLocaleString() + " Kyats";
+        document.getElementById('room-card-count').innerText = roomCardCount;
+        alert("Room Card 1 ကတ် ဝယ်ယူမှု အောင်မြင်ပါသည်။");
+      } else {
+        alert("လက်ကျန်ငွေ မလုံလောက်ပါ။ ကျေးဇူးပြု၍ ငွေဖြည့်ပါ။");
+      }
+    }
+
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
   </script>
 </body>
-  </html>
-  
+      </html>
+
